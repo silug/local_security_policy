@@ -46,7 +46,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       export_policy_settings(inffile)
       File.open inffile, 'r:IBM437' do |file|
         # remove /r/n and remove the BOM
-        inffile_content = file.read.force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+        inffile_content = file.read.re_encode_as_utf8
         @file_object ||= PuppetX::IniFile.new(:content => inffile_content)
       end
     end

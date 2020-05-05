@@ -10,15 +10,21 @@ class SecurityPolicy
         @wmic_cmd = Puppet::Provider::CommandDefiner.define('wmic', 'wmic', Puppet::Provider)
     end
 
+    def re_encode_as_utf8(to_encode)
+        to_encode.force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+    rescue
+        to_encode
+    end
+
     def wmic(args=[])
         case args[0]
             when 'useraccount'
-                @@useraccount ||= wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+                @@useraccount ||= wmic_cmd.execute(args).re_encode_as_utf8
             when 'group'
-                @@groupaccount ||= wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+                @@groupaccount ||= wmic_cmd.execute(args).re_encode_as_utf8
             else
                 # will not cache
-                wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+                wmic_cmd.execute(args).re_encode_as_utf8
         end
     end
 
