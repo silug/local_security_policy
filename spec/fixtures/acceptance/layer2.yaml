@@ -1,0 +1,5 @@
+---
+local_security_policy::policies:
+  'Audit account logon events':
+    ensure: 'present'
+    policy_value: 'Success'

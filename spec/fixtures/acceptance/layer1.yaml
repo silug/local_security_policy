@@ -1,0 +1,5 @@
+---
+local_security_policy::policies:
+  'Enforce password history':
+    ensure: 'present'
+    policy_value: '30'

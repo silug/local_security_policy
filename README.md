@@ -5,7 +5,7 @@ created by Paul Cannon at email paulscannon at gmail dot com
 forked and updated by Adam Yohrling at email aryohrling at gmail dot com
 
 ## Local_security_policy features
-Configure, local security policy (LSP) for windows servers.  
+Configure local security policy (LSP) for Windows servers.
 LSP is key to a baseline configuration of the following security features:
 ### Account Policy
   * Password Policy
@@ -17,10 +17,10 @@ LSP is key to a baseline configuration of the following security features:
   * Registry Values
 
 
-This module uses types and providers to list, update, validate settings
+This module uses types and providers to list, update, and validate settings.
 
 ## Use
-The title and name of the resources is exact match of what is in secedit GUI.  If you are uncertain of the setting name and values just user 'resource' to pipe them all into a file and make adjustments as necessary.
+The title and name of the resources is exact match of what is in secedit GUI.  If you are uncertain of the setting name and values just use `puppet resource local_security_policy` to pipe them all into a file and make adjustments as necessary.
 The block will look like this
 ```
 local_security_policy { 'Audit account logon events': <- Title / Name
@@ -33,11 +33,11 @@ local_security_policy { 'Audit account logon events': <- Title / Name
 
 
 ### Listing all settings
-Show all local_security_policy resources available on server
+Show all `local_security_policy` resources available on server
 ```
 puppet resource local_security_policy
 ```
-Show a single local_security_policy resources available on server
+Show a single `local_security_policy` resources available on server
 ```
 puppet resource local_security_policy 'Maximum password age'
 ```
@@ -220,14 +220,14 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
 
 
 ## How this works
-The local_security_policy works by using `secedit /export` to export a list of currently set policies.  The module will then
-take the user defined resource and compare the values against the exported policies.  If the values on the system do not match
+The `local_security_policy` module works by using `secedit /export` to export a list of currently set policies.  The module will then
+take the user defined resources and compare the values against the exported policies.  If the values on the system do not match
 the defined resource, the module will run `secedit /configure` to configure the policy on the system.  If the policy already
 exists on the system no change will be made.
 
 In order to make setting these polices easier, this module has extracted some of the difficult to lookup or remember pieces
-of a policy and placed them in a map for easy translation and value conversion.  This means that you only need to remember the user
-instead of the sid value, as well as the policy description instead of the special key that needs to be set.  The mappings
+of a policy and placed them in a map for easy translation and value conversion.  This means that you only need to remember the user or group name
+instead of the SID value, as well as the policy description instead of the special key that needs to be set.  The mappings
 below define how this translation works.  If there is no map for your policy you will need to add to `lib/puppet_x/lsp/security_policy.rb`
 
 ```
@@ -243,11 +243,11 @@ below define how this translation works.  If there is no map for your policy you
             },
 ```
 
-The key `Accounts: Rename administrator account ` in the first hash is what the user will define as the name in the resource name. 
+The key `Accounts: Rename administrator account ` in the first hash is what the user will define as the name in the resource name.
 Instead of remembering the policy name, the description will help us remember what the policy is for.  When defining new policy
-maps you will need to define the key, name, policy_type, and optionally, data_type or reg_type.  
+maps you will need to define the key, name, `policy_type`, and optionally, `data_type` or `reg_type`.
 
-Currently for data_type there is only `:quoted_string`.  However, for reg_type(integer value) there are many values which are listed below:
+Currently for `data_type` there is only `:quoted_string`.  However, for `reg_type` (integer value) there are many values which are listed below:
 
 ```
     REG_NONE 0

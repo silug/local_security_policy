@@ -1,0 +1,7 @@
+---
+version: 5
+hierarchy:
+  - name: layer1
+    path: layer1.yaml
+  - name: layer2
+    path: layer2.yaml
