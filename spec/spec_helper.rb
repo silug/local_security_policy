@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet-facts'
 
@@ -9,16 +10,16 @@ include RspecPuppetFacts
 
 # RSpec Material
 fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
-module_name = File.basename(File.expand_path(File.join(__FILE__,'../..')))
+module_name = File.basename(File.expand_path(File.join(__FILE__, '../..')))
 
 # Add fixture lib dirs to LOAD_PATH. Work-around for PUP-3336
-if Puppet.version < "4.0.0"
+if Puppet.version < '4.0.0'
   Dir["#{fixture_path}/modules/*/lib"].entries.each do |lib_dir|
     $LOAD_PATH << lib_dir
   end
 end
 
-default_hiera_config =<<-EOM
+default_hiera_config = <<-EOM
 ---
 version: 5
 hierarchy:
@@ -80,12 +81,12 @@ def set_hieradata(hieradata)
   RSpec.configure { |c| c.default_facts['custom_hiera'] = hieradata }
 end
 
-if not File.directory?(File.join(fixture_path,'hieradata')) then
-  FileUtils.mkdir_p(File.join(fixture_path,'hieradata'))
+unless File.directory?(File.join(fixture_path, 'hieradata'))
+  FileUtils.mkdir_p(File.join(fixture_path, 'hieradata'))
 end
 
-if not File.directory?(File.join(fixture_path,'modules',module_name)) then
-  FileUtils.mkdir_p(File.join(fixture_path,'modules',module_name))
+unless File.directory?(File.join(fixture_path, 'modules', module_name))
+  FileUtils.mkdir_p(File.join(fixture_path, 'modules', module_name))
 end
 
 RSpec.configure do |c|
@@ -100,12 +101,12 @@ RSpec.configure do |c|
 
   # Useless backtrace noise
   backtrace_exclusion_patterns = [
-    /spec_helper/,
-    /gems/
+    %r{spec_helper},
+    %r{gems},
   ]
 
   c.before(:all) do
-    data = YAML.load(default_hiera_config)
+    data = YAML.safe_load(default_hiera_config)
     data.keys.each do |key|
       next unless data[key].is_a?(Hash)
 
@@ -115,7 +116,7 @@ RSpec.configure do |c|
         data[key]['datadir'] = File.join(fixture_path, 'hieradata')
       end
     end
-  
+
     File.open(c.hiera_config, 'w') do |f|
       f.write data.to_yaml
     end
@@ -135,9 +136,9 @@ RSpec.configure do |c|
 
     # sanitize hieradata
     if defined?(hieradata)
-      set_hieradata(hieradata.gsub(':','_'))
+      set_hieradata(hieradata.tr(':', '_'))
     elsif defined?(class_name)
-      set_hieradata(class_name.gsub(':','_'))
+      set_hieradata(class_name.tr(':', '_'))
     end
   end
 

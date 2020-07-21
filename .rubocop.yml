@@ -33,9 +33,15 @@ RSpec/BeforeAfterAll:
     A necessary evil in acceptance testing.
   Exclude:
   - spec/acceptance/**/*.rb
+  - spec/spec_helper.rb
+  - spec/spec_helper_acceptance.rb
 RSpec/HookArgument:
   Description: Prefer explicit :each argument, matching existing module's style
   EnforcedStyle: each
+Style/AccessorMethodName:
+  Description: Ignore non-class files
+  Exclude:
+  - spec/**/*
 Style/BlockDelimiters:
   Description: Prefer braces for chaining. Mostly an aesthetical choice. Better to
     be consistent then.
@@ -57,6 +63,10 @@ Style/FormatStringToken:
   Description: Following the main puppet project's style, prefer the simpler template
     tokens over annotated ones.
   EnforcedStyle: template
+Style/HashSyntax:
+  Dscription: Use the new Ruby 1.9 hash syntax. rspec-puppet resources will fail this.
+  Exclude:
+  - spec/classes/*
 Style/Lambda:
   Description: Prefer the keyword for easier discoverability.
   EnforcedStyle: literal

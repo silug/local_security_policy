@@ -17,25 +17,29 @@ describe 'local_security_policy' do
       end
 
       context 'with settings from params' do
-        let(:params) {{
-          :policies => {
-            'Audit account logon events' => {
-              :ensure         => 'present',
-              :policy_setting => 'AuditAccountLogon',
-              :policy_type    => 'Event Audit',
-              :policy_value   => 'Success,Failure',
+        let(:params) do
+          {
+            'policies' => {
+              'Audit account logon events' => {
+                'ensure'         => 'present',
+                'policy_setting' => 'AuditAccountLogon',
+                'policy_type'    => 'Event Audit',
+                'policy_value'   => 'Success,Failure',
+              },
             },
-          },
-        }}
+          }
+        end
 
         it { is_expected.to compile.with_all_deps }
 
-        it { is_expected.to contain_local_security_policy('Audit account logon events').with(
-          :ensure         => 'present',
-          :policy_setting => 'AuditAccountLogon',
-          :policy_type    => 'Event Audit',
-          :policy_value   => 'Success,Failure'
-        ) }
+        it {
+          is_expected.to contain_local_security_policy('Audit account logon events').with(
+            :ensure         => 'present',
+            :policy_setting => 'AuditAccountLogon',
+            :policy_type    => 'Event Audit',
+            :policy_value   => 'Success,Failure',
+          )
+        }
       end
 
       context 'with settings from hiera' do
@@ -43,25 +47,29 @@ describe 'local_security_policy' do
 
         it { is_expected.to compile.with_all_deps }
 
-        it { is_expected.to contain_local_security_policy('Audit account logon events').with(
-          :ensure         => 'present',
-          :policy_setting => 'AuditAccountLogon',
-          :policy_type    => 'Event Audit',
-          :policy_value   => 'Success,Failure'
-        ) }
+        it {
+          is_expected.to contain_local_security_policy('Audit account logon events').with(
+            :ensure         => 'present',
+            :policy_setting => 'AuditAccountLogon',
+            :policy_type    => 'Event Audit',
+            :policy_value   => 'Success,Failure',
+          )
+        }
 
-        it { is_expected.to contain_local_security_policy('Generate security audits').with(
-          :ensure         => 'present',
-          :policy_setting => 'SeAuditPrivilege',
-          :policy_type    => 'Privilege Rights',
-          :policy_value   => 'Administrators,Network Configuration Operators'
-        ) }
+        it {
+          is_expected.to contain_local_security_policy('Generate security audits').with(
+            :ensure         => 'present',
+            :policy_setting => 'SeAuditPrivilege',
+            :policy_type    => 'Privilege Rights',
+            :policy_value   => 'Administrators,Network Configuration Operators',
+          )
+        }
       end
 
       context 'with settings from hiera and one invalid' do
         let(:hieradata) { 'lsp_policies_invalid' }
 
-        it { is_expected.to compile.and_raise_error(/Invalid Policy name: Super secret custom policy/) }
+        it { is_expected.to compile.and_raise_error(%r{Invalid Policy name: Super secret custom policy}) }
       end
     end
   end
