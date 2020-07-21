@@ -1,6 +1,21 @@
 ---
 spec/spec_helper.rb:
   mock_with: ':rspec'
+  hiera_config_ruby: File.expand_path(File.join(__FILE__, '..', 'fixtures', 'hieradata', 'hiera.yaml'))
+  spec_overrides:
+    - |
+      def set_hieradata(hieradata)
+        RSpec.configure { |c| c.default_facts['custom_hiera'] = hieradata }
+      end
+      RSpec.configure do |c|
+        c.before :each do
+          if defined?(hieradata)
+            set_hieradata(hieradata.tr(':', '_'))
+          elsif defined?(class_name)
+            set_hieradata(class_name.tr(':', '_'))
+          end
+        end
+      end
 Gemfile:
   optional:
     ':development':
@@ -21,6 +36,20 @@ Gemfile:
       configs:
         AllCops:
           TargetRubyVersion: '2.4'
+        Style/AccessorMethodName:
+          Description: 'Do not prefix method names iwth `set_` or `get_`. Need to ignore non-ruby class files'
+          Exclude:
+            - 'spec/**/*'
+        Style/HashSyntax:
+          Description: 'Use the new Ruby 1.9 hash syntax. Rspec-puppet resources will fail this cop.'
+          Exclude:
+            - 'spec/classes/*'
+        RSpec/BeforeAfterAll:
+          Description: 'Beware of using after(:all) as it may cause state to leak between tests. A necessary evil in acceptance testing.'
+          Exclude:
+            - 'spec/acceptance/**/*.rb'
+            - 'spec/spec_helper.rb'
+            - 'spec/spec_helper_acceptance.rb'
 .gitlab-ci.yml:
   custom:
     ruby_versions:
